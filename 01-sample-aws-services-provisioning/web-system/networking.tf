@@ -177,11 +177,11 @@ resource "aws_lb_target_group" "web_system_alb_target_group" {
 # ALB target attachment - Attach EC2 instances to target group of ALB
 resource "aws_lb_target_group_attachment" "web_system_alb_ec2_instance_1" {
   target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
-  target_id        = aws_instance.instance_1.id
+  target_id        = aws_instance.web_system_ec2_instance_1.id
   port             = 8080
 }
 
-resource "aws_lb_target_group_attachment" "web_system_alb_ec2_instance_2" {
+resource "aws_lb_target_group_attachment" "web_system_ec2_instance_2" {
   target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
   target_id        = aws_instance.instance_2.id
   port             = 8080
