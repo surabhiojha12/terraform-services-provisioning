@@ -135,3 +135,95 @@ resource "aws_security_group_rule" "web_system_allow_alb_all_outbound" {
   security_group_id = aws_security_group.web_system_alb_security_group.id
 }
 
+# ALB Listener - load balancer
+resource "aws_lb_listener" "web_system_http_listener" {
+  load_balancer_arn = aws_lb.web_system_application_load_balancer.arn
+
+  port = 80
+
+  protocol = "HTTP"
+
+  # By default, return a simple 404 page
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "404: page not found"
+      status_code  = 404
+    }
+  }
+}
+
+# ALB target group - load balancer
+resource "aws_lb_target_group" "web_system_alb_target_group" {
+  name        = "web_system_alb_target_group"
+  target_type = "instance"
+  port        = 8080
+  protocol    = "TCP"
+  vpc_id      = aws_vpc.web_system.id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 15
+    timeout             = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+# ALB target attachment - Attach EC2 instances to target group of ALB
+resource "aws_lb_target_group_attachment" "web_system_alb_ec2_instance_1" {
+  target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
+  target_id        = aws_instance.instance_1.id
+  port             = 8080
+}
+
+resource "aws_lb_target_group_attachment" "web_system_alb_ec2_instance_2" {
+  target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
+  target_id        = aws_instance.instance_2.id
+  port             = 8080
+}
+
+# ALB Listener rule - load balancer
+resource "aws_lb_listener_rule" "web_system_alb_listener_rule" {
+  listener_arn = aws_lb_listener.web_system_http_listener.arn
+  priority     = 100
+
+  condition {
+    path_pattern {
+      values = ["*"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
+  }
+}
+
+# ALB
+resource "aws_lb" "web_system_application_load_balancer" {
+  name               = "web_system_application_load_balancer"
+  load_balancer_type = "application"
+  subnets            = [for subnet in aws_subnet.web_system_public_subnet : subnet.id]
+  security_groups    = [aws_security_group.web_system_alb_security_group.id]
+}
+
+resource "aws_security_group" "web_system_ec2_instances_security_group" {
+  name = "web_system_ec2_instances_security_group"
+  description = "This Security Group is for EC2 instances"
+  vpc_id = aws_vpc.web_system.id
+}
+
+resource "aws_security_group_rule" "allow_http_inbound" {
+  type              = "ingress"
+  security_group_id = aws_security_group.web_system_ec2_instances_security_group.id
+
+  from_port   = 8080
+  to_port     = 8080
+  protocol    = "tcp"
+  source_security_group_id = aws_security_group.web_system_alb_security_group.id
+}
