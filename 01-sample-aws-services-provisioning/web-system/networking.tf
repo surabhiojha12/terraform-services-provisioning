@@ -26,6 +26,16 @@ resource "aws_subnet" "web_system_public_subnet" {
   } 
 }
 
+# public subnet 2
+resource "aws_subnet" "web_system_public_subnet_2" {
+  vpc_id     = aws_vpc.web_system.id
+  cidr_block = "10.0.3.0/24"
+  availability_zone = "us-east-1b"
+  tags = {
+    Name = "web_system"
+  } 
+}
+
 # private subnet
 resource "aws_subnet" "web_system_private_subnet" {
   vpc_id     = aws_vpc.web_system.id
@@ -157,10 +167,10 @@ resource "aws_lb_listener" "web_system_http_listener" {
 
 # ALB target group - load balancer
 resource "aws_lb_target_group" "web_system_alb_target_group" {
-  name        = "web_system_alb_target_group"
+  name        = "web-system-alb-target-group"
   target_type = "instance"
   port        = 8080
-  protocol    = "TCP"
+  protocol    = "HTTP"
   vpc_id      = aws_vpc.web_system.id
 
   health_check {
@@ -183,7 +193,7 @@ resource "aws_lb_target_group_attachment" "web_system_alb_ec2_instance_1" {
 
 resource "aws_lb_target_group_attachment" "web_system_ec2_instance_2" {
   target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
-  target_id        = aws_instance.instance_2.id
+  target_id        = aws_instance.web_system_ec2_instance_2.id
   port             = 8080
 }
 
@@ -206,14 +216,14 @@ resource "aws_lb_listener_rule" "web_system_alb_listener_rule" {
 
 # ALB
 resource "aws_lb" "web_system_application_load_balancer" {
-  name               = "web_system_application_load_balancer"
+  name               = "web-system-load-balancer"
   load_balancer_type = "application"
-  subnets            = [for subnet in aws_subnet.web_system_public_subnet : subnet.id]
+  subnets            = [aws_subnet.web_system_public_subnet.id, aws_subnet.web_system_public_subnet_2.id]
   security_groups    = [aws_security_group.web_system_alb_security_group.id]
 }
 
 resource "aws_security_group" "web_system_ec2_instances_security_group" {
-  name = "web_system_ec2_instances_security_group"
+  name = "web-system-ec2-instances-security-group"
   description = "This Security Group is for EC2 instances"
   vpc_id = aws_vpc.web_system.id
 }
