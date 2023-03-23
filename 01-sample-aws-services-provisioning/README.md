@@ -11,3 +11,7 @@
 10. ALB - 1
 11. Security Group - For EC2 instances
 12. EC2 instaces - 2 - in each Private subnets.
+
+## High level architecture
+![terraform](https://user-images.githubusercontent.com/30311373/227195970-7dbed23a-3c19-406b-b4a3-68404c75de93.png)
+
