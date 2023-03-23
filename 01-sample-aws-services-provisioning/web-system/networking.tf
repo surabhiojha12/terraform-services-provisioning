@@ -17,32 +17,42 @@ resource "aws_vpc" "web_system" {
 }
 
 # public subnet
-resource "aws_subnet" "web_system_public_subnet" {
+resource "aws_subnet" "web_system_public_subnet_1" {
   vpc_id     = aws_vpc.web_system.id
   cidr_block = "10.0.1.0/24"
   availability_zone = "us-east-1a"
   tags = {
-    Name = "web_system"
+    Name = "web_system_public_subnet_1"
   } 
 }
 
 # public subnet 2
 resource "aws_subnet" "web_system_public_subnet_2" {
   vpc_id     = aws_vpc.web_system.id
-  cidr_block = "10.0.3.0/24"
+  cidr_block = "10.0.2.0/24"
   availability_zone = "us-east-1b"
   tags = {
-    Name = "web_system"
+    Name = "web_system_public_subnet_2"
   } 
 }
 
 # private subnet
-resource "aws_subnet" "web_system_private_subnet" {
+resource "aws_subnet" "web_system_private_subnet_1" {
   vpc_id     = aws_vpc.web_system.id
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "10.0.3.0/24"
   availability_zone = "us-east-1a"
   tags = {
-    Name = "web_system"
+    Name = "web_system_private_subnet_1"
+  }
+}
+
+# private subnet
+resource "aws_subnet" "web_system_private_subnet_2" {
+  vpc_id     = aws_vpc.web_system.id
+  cidr_block = "10.0.4.0/24"
+  availability_zone = "us-east-1b"
+  tags = {
+    Name = "web_system_private_subnet_2"
   }
 }
 
@@ -50,7 +60,7 @@ resource "aws_subnet" "web_system_private_subnet" {
 resource "aws_internet_gateway" "web_system_igw" {
   vpc_id = aws_vpc.web_system.id
   tags = {
-    Name = "web_system"
+    Name = "web_system_igw"
   }
 }
 
@@ -66,13 +76,18 @@ resource "aws_route_table" "web_system_public_subnet_route_table" {
   }
 
   tags = {
-    Name = "web_system"
+    Name = "web_system_public_subnet_route_table"
   }  
 }
 
 # Associating Public Subnet to Route table
-resource "aws_route_table_association" "web_system_public_subnet_association" {
-  subnet_id      = aws_subnet.web_system_public_subnet.id
+resource "aws_route_table_association" "web_system_public_subnet_1_association" {
+  subnet_id      = aws_subnet.web_system_public_subnet_1.id
+  route_table_id = aws_route_table.web_system_public_subnet_route_table.id
+}
+
+resource "aws_route_table_association" "web_system_public_subnet_2_association" {
+  subnet_id      = aws_subnet.web_system_public_subnet_2.id
   route_table_id = aws_route_table.web_system_public_subnet_route_table.id
 }
 
@@ -80,19 +95,19 @@ resource "aws_route_table_association" "web_system_public_subnet_association" {
 resource "aws_eip" "web_system_eip_nat" {
   vpc = true
   tags = {
-    Name = "web_system"
+    Name = "web_system_eip_nat"
   }  
 }
 
 # Public NAT
 resource "aws_nat_gateway" "web_system_nat" {
   allocation_id = aws_eip.web_system_eip_nat.id
-  subnet_id     = aws_subnet.web_system_public_subnet.id
+  subnet_id     = aws_subnet.web_system_public_subnet_1.id
   # To ensure proper ordering, it is recommended to add an explicit dependency
   # on the Internet Gateway for the VPC.
   depends_on = [aws_internet_gateway.web_system_igw]
   tags = {
-    Name = "web_system"
+    Name = "web_system_nat"
   }  
 }
 
@@ -108,13 +123,13 @@ resource "aws_route_table" "web_system_private_subnet_route_table" {
   }
 
   tags = {
-    Name = "web_system"
+    Name = "web_system_private_subnet_route_table"
   }  
 }
 
 # Associating Private Subnet to Route table
 resource "aws_route_table_association" "web_system_private_subnet_association" {
-  subnet_id      = aws_subnet.web_system_private_subnet.id
+  subnet_id      = aws_subnet.web_system_private_subnet_1.id
   route_table_id = aws_route_table.web_system_private_subnet_route_table.id
 }
 
@@ -218,16 +233,18 @@ resource "aws_lb_listener_rule" "web_system_alb_listener_rule" {
 resource "aws_lb" "web_system_application_load_balancer" {
   name               = "web-system-load-balancer"
   load_balancer_type = "application"
-  subnets            = [aws_subnet.web_system_public_subnet.id, aws_subnet.web_system_public_subnet_2.id]
+  subnets            = [aws_subnet.web_system_public_subnet_1.id, aws_subnet.web_system_public_subnet_2.id]
   security_groups    = [aws_security_group.web_system_alb_security_group.id]
 }
 
+# Security group for - EC2
 resource "aws_security_group" "web_system_ec2_instances_security_group" {
   name = "web-system-ec2-instances-security-group"
   description = "This Security Group is for EC2 instances"
   vpc_id = aws_vpc.web_system.id
 }
 
+# Security group inbound rule for EC2
 resource "aws_security_group_rule" "allow_http_inbound" {
   type              = "ingress"
   security_group_id = aws_security_group.web_system_ec2_instances_security_group.id
@@ -236,4 +253,14 @@ resource "aws_security_group_rule" "allow_http_inbound" {
   to_port     = 8080
   protocol    = "tcp"
   source_security_group_id = aws_security_group.web_system_alb_security_group.id
+}
+
+# Security group outbound rule for EC2
+resource "aws_security_group_rule" "web_system_allow_alb_all_outbound" {
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.web_system_ec2_instances_security_group.id
 }
