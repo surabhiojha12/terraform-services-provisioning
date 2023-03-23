@@ -279,7 +279,7 @@ resource "aws_security_group" "web_system_ec2_instances_security_group" {
 }
 
 # Security group inbound rule for EC2
-resource "aws_security_group_rule" "allow_http_inbound" {
+resource "aws_security_group_rule" "web_system_ec2_instances_inbound_rule" {
   type              = "ingress"
   security_group_id = aws_security_group.web_system_ec2_instances_security_group.id
 
@@ -290,7 +290,7 @@ resource "aws_security_group_rule" "allow_http_inbound" {
 }
 
 # Security group outbound rule for EC2
-resource "aws_security_group_rule" "web_system_allow_alb_all_outbound" {
+resource "aws_security_group_rule" "web_system_ec2_instances_outbound_rule" {
   type        = "egress"
   from_port   = 0
   to_port     = 0
