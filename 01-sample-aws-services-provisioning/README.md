@@ -15,7 +15,16 @@
 ## High level architecture
 ![terraform](https://user-images.githubusercontent.com/30311373/227195970-7dbed23a-3c19-406b-b4a3-68404c75de93.png)
 
-## Run the application
+## Commads to provision resources
+1. For 01-sample-aws-services-provisioning
+    1. cd 01-sample-aws-services-provisioning
+    2. aws configure
+    3. terraform init
+    4. terraform plan
+    5. terraform apply
+    6. terraform destroy
+
+## Verify the setup by running the http server
 - There are 2 EC2 instances running 2 different servers.
 - One instance makes call to internet and runs a http server based on that result.
 - The other instance run a simple http server.
