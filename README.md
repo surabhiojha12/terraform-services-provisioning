@@ -1,4 +1,4 @@
-# terraform-services-provisioning
+# Terraform - AWS Service Provisioning
 The purpose of this repository is to use terraform to provision AWS resources.
 
 ## Setup
@@ -11,7 +11,7 @@ Official installation instructions from HashiCorp: https://learn.hashicorp.com/t
 3. Add the necessary IAM policies (e.g. AmazonEC2FullAccess)
 4. Save Access key + secret key (or use AWS CLI aws configure -- https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 
-## Section
+## Sections
 1. 01-sample-aws-services-provisioning
-    - Simple AWS provisiong.
+    - Terraform to provision aws resources with sample server to verify.
     - Follow README.md in the respective section.
