@@ -181,8 +181,26 @@ resource "aws_lb_listener" "web_system_http_listener" {
 }
 
 # ALB target group - load balancer
-resource "aws_lb_target_group" "web_system_alb_target_group" {
-  name        = "web-system-alb-target-group"
+resource "aws_lb_target_group" "web_system_alb_target_group_1" {
+  name        = "web-system-alb-target-group-for-ec2-call-to-internet"
+  target_type = "instance"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.web_system.id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200"
+    interval            = 15
+    timeout             = 3
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_target_group" "web_system_alb_target_group_2" {
+  name        = "web-system-alb-target-group-private"
   target_type = "instance"
   port        = 8080
   protocol    = "HTTP"
@@ -201,31 +219,47 @@ resource "aws_lb_target_group" "web_system_alb_target_group" {
 
 # ALB target attachment - Attach EC2 instances to target group of ALB
 resource "aws_lb_target_group_attachment" "web_system_alb_ec2_instance_1" {
-  target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
+  target_group_arn = aws_lb_target_group.web_system_alb_target_group_1.arn
   target_id        = aws_instance.web_system_ec2_instance_1.id
   port             = 8080
 }
 
 resource "aws_lb_target_group_attachment" "web_system_ec2_instance_2" {
-  target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
+  target_group_arn = aws_lb_target_group.web_system_alb_target_group_2.arn
   target_id        = aws_instance.web_system_ec2_instance_2.id
   port             = 8080
 }
 
 # ALB Listener rule - load balancer
-resource "aws_lb_listener_rule" "web_system_alb_listener_rule" {
+resource "aws_lb_listener_rule" "web_system_alb_listener_rule_public_server" {
   listener_arn = aws_lb_listener.web_system_http_listener.arn
   priority     = 100
 
   condition {
     path_pattern {
-      values = ["*"]
+      values = ["/public/*"]
     }
   }
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.web_system_alb_target_group.arn
+    target_group_arn = aws_lb_target_group.web_system_alb_target_group_1.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "web_system_alb_listener_rule_private_server" {
+  listener_arn = aws_lb_listener.web_system_http_listener.arn
+  priority     = 100
+
+  condition {
+    path_pattern {
+      values = ["/private/*"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_system_alb_target_group_2.arn
   }
 }
 
