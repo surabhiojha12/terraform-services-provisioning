@@ -21,7 +21,7 @@
 - The other instance run a simple http server.
 - Once the ALB is up and running follow these steps:-
     - Copy DNS name of ALB and run it in Web Browser
-    - The DNS name calls to EC2 without internet access.
+    - The ALB redirects the request to EC2 instance(without internet access) if there is no path({DNS-name}).
       <img width="492" alt="Screenshot 2023-03-23 at 5 36 19 PM" src="https://user-images.githubusercontent.com/30311373/227198916-595d3997-0e09-4e93-8ea7-fa1186d58a80.png">
-    - Run {DNS-name}/index.html -> calls EC2 instance with internet access.
+    - The ALB redirects the request to EC2 instance(with internet access) if the path is {DNS-name}/index.html
       <img width="1440" alt="Screenshot 2023-03-23 at 5 33 44 PM" src="https://user-images.githubusercontent.com/30311373/227198744-1f3ee5c4-1f94-40a8-9a71-7d3c41f384b4.png">
