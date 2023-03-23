@@ -237,7 +237,7 @@ resource "aws_lb_listener_rule" "web_system_alb_listener_rule_public_server" {
 
   condition {
     path_pattern {
-      values = ["/public"]
+      values = ["/index.html"]
     }
   }
 
@@ -253,7 +253,7 @@ resource "aws_lb_listener_rule" "web_system_alb_listener_rule_private_server" {
 
   condition {
     path_pattern {
-      values = ["/private"]
+      values = ["*"]
     }
   }
 
