@@ -182,7 +182,7 @@ resource "aws_lb_listener" "web_system_http_listener" {
 
 # ALB target group - load balancer
 resource "aws_lb_target_group" "web_system_alb_target_group_1" {
-  name        = "web-system-alb-target-group-for-ec2-call-to-internet"
+  name        = "web-system-alb-target-group-1"
   target_type = "instance"
   port        = 8080
   protocol    = "HTTP"
@@ -200,7 +200,7 @@ resource "aws_lb_target_group" "web_system_alb_target_group_1" {
 }
 
 resource "aws_lb_target_group" "web_system_alb_target_group_2" {
-  name        = "web-system-alb-target-group-private"
+  name        = "web-system-alb-target-group-2"
   target_type = "instance"
   port        = 8080
   protocol    = "HTTP"
@@ -237,7 +237,7 @@ resource "aws_lb_listener_rule" "web_system_alb_listener_rule_public_server" {
 
   condition {
     path_pattern {
-      values = ["/public/*"]
+      values = ["/public"]
     }
   }
 
@@ -249,11 +249,11 @@ resource "aws_lb_listener_rule" "web_system_alb_listener_rule_public_server" {
 
 resource "aws_lb_listener_rule" "web_system_alb_listener_rule_private_server" {
   listener_arn = aws_lb_listener.web_system_http_listener.arn
-  priority     = 100
+  priority     = 200
 
   condition {
     path_pattern {
-      values = ["/private/*"]
+      values = ["/private"]
     }
   }
 
