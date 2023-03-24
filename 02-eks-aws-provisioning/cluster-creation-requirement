@@ -1,0 +1,35 @@
+1. Name
+2. Version
+3. Cluster Service Role - IAM Role for K8s Control plane -https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html#create-service-role
+4. Secret encryption
+5. Tags
+6. Networking
+    1. VPC
+    2. Subnets - Control plane places ENI for communication
+    3. Cluster IP address family
+7. Cluster endpoint access - Public, Public and Private, Private
+8. Control plane logging
+9. Add-ons
+10. Configure selected add-on settings
+11. Review and create
+
+Add node group
+1. Name
+2. IAM Role - for nodes
+3. Launch Template - optional
+4. Kubernetes label
+5. Kubernetes taints
+6. Tags
+7. Node group compute config
+    1. AMI type
+    2. Capacity type
+    3. Instance type
+    4. Disk size
+8. Node group scaling config
+    1. Desired size
+    2. Max size
+    3. Min size
+9. Node group update config
+    1. Maximum unavailable
+10. Subnets - where node will run
+11. Review and create
