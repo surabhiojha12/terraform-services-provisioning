@@ -25,9 +25,20 @@ data "aws_iam_policy_document" "aws_assume_role_policy" {
   }
 }
 
+data "aws_iam_policy_document" "aws_assume_role_policy_eks" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["eks.amazonaws.com"]
+    }
+  }
+}
+
 resource "aws_iam_role" "cluster_system_eks_cluster_role" {
   name = "cluster_system_eks_cluster_role"
-  assume_role_policy = data.aws_iam_policy_document.aws_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.aws_assume_role_policy_eks.json
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_system_attach_eks_policy" {

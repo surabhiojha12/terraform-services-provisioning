@@ -189,10 +189,10 @@ resource "aws_security_group" "cluster_system_ec2_instances_security_group" {
 resource "aws_security_group_rule" "cluster_system_ec2_instances_inbound_rule" {
   type              = "ingress"
   security_group_id = aws_security_group.cluster_system_ec2_instances_security_group.id
-
   from_port   = 8080
   to_port     = 8080
   protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
 }
 
 # Security group outbound rule for EC2
