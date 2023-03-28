@@ -3,6 +3,11 @@ variable "cluster_name" {
   default     = "cluster-learn"
 }
 
+variable "node_group_name" {
+  type        = string
+  default     = "cluster-learn-auto-scaling-node-group"
+}
+
 # EC2 Variables
 variable "ami" {
   description = "Amazon machine image to use for ec2 instance"
