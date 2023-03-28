@@ -12,11 +12,11 @@ variable "node_group_name" {
 variable "ami" {
   description = "Amazon machine image to use for ec2 instance"
   type        = string
-  default     = "ami-005f9685cb30f234b" # Amazon Linux - Free tier eligible
+  default     = "ami-00c39f71452c08778" # Amazon Linux - Free tier eligible
 }
 
 variable "instance_type" {
   description = "ec2 instance type"
   type        = string
-  default     = "t2.micro" # Free tier eligible
+  default     = "t2.small"
 }

@@ -1,4 +1,4 @@
-# conatins
+# contains
 # VPC
 # Subnets
 # Internet Gateway
