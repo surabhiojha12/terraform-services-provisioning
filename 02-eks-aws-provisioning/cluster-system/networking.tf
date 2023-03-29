@@ -181,30 +181,3 @@ resource "aws_route_table_association" "cluster_system_private_subnet_associatio
   subnet_id      = aws_subnet.cluster_system_private_subnet_2.id
   route_table_id = aws_route_table.cluster_system_private_subnet_route_table_2.id
 }
-
-# Security group for - EC2
-resource "aws_security_group" "cluster_system_ec2_instances_security_group" {
-  name = "web-system-ec2-instances-security-group"
-  description = "This Security Group is for EC2 instances"
-  vpc_id = aws_vpc.cluster_system.id
-}
-
-# Security group inbound rule for EC2
-resource "aws_security_group_rule" "cluster_system_ec2_instances_inbound_rule" {
-  type              = "ingress"
-  security_group_id = aws_security_group.cluster_system_ec2_instances_security_group.id
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
-}
-
-# Security group outbound rule for EC2
-resource "aws_security_group_rule" "cluster_system_ec2_instances_outbound_rule" {
-  type        = "egress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.cluster_system_ec2_instances_security_group.id
-}

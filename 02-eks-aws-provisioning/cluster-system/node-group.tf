@@ -4,11 +4,10 @@ resource "aws_eks_node_group" "cluster_system_eks_cluster_node_group" {
   node_role_arn   = aws_iam_role.cluster_system_eks_node_role.arn
   subnet_ids      = [aws_subnet.cluster_system_private_subnet_1.id, aws_subnet.cluster_system_private_subnet_2.id]
 
-  launch_template {
-    id = aws_launch_template.cluster_system_launch_template.id
-    version = aws_launch_template.cluster_system_launch_template.latest_version
-  }
-  
+  ami_type = "AL2_x86_64"
+  disk_size = 20
+  instance_types = [var.instance_type]
+
   scaling_config {
     desired_size = 2
     max_size     = 2
