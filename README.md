@@ -15,3 +15,6 @@ Official installation instructions from HashiCorp: https://learn.hashicorp.com/t
 1. 01-sample-aws-services-provisioning
     - Terraform to provision aws resources with sample server to verify.
     - Follow README.md in the respective section.
+2. 02-eks-aws-provisioning
+    - Terraform to provision aws eks with sample k8s application to deploy.
+    - Follow README.md in the respective section.

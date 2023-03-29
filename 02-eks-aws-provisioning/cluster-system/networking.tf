@@ -5,7 +5,6 @@
 # NAT Gateway
 # Elastic IP
 # Route table
-# Security group
 
 # VPC
 resource "aws_vpc" "cluster_system" {
