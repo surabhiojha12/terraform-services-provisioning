@@ -18,5 +18,5 @@ variable "ami" {
 variable "instance_type" {
   description = "ec2 instance type"
   type        = string
-  default     = "t2.medium"
+  default     = "t3.small"
 }

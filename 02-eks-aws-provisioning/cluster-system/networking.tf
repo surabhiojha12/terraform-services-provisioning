@@ -20,6 +20,7 @@ resource "aws_subnet" "cluster_system_public_subnet_1" {
   vpc_id     = aws_vpc.cluster_system.id
   cidr_block = "10.1.1.0/24"
   availability_zone = "us-east-1a"
+  map_public_ip_on_launch = true
   tags = {
     Name = "cluster_system_public_subnet_1"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
@@ -31,6 +32,7 @@ resource "aws_subnet" "cluster_system_public_subnet_2" {
   vpc_id     = aws_vpc.cluster_system.id
   cidr_block = "10.1.2.0/24"
   availability_zone = "us-east-1b"
+  map_public_ip_on_launch = true
   tags = {
     Name = "cluster_system_public_subnet_2"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
@@ -189,9 +191,9 @@ resource "aws_security_group" "cluster_system_ec2_instances_security_group" {
 resource "aws_security_group_rule" "cluster_system_ec2_instances_inbound_rule" {
   type              = "ingress"
   security_group_id = aws_security_group.cluster_system_ec2_instances_security_group.id
-  from_port   = 8080
-  to_port     = 8080
-  protocol    = "tcp"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"]
 }
 

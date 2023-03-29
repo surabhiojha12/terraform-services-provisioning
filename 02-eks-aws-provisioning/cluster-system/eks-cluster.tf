@@ -5,7 +5,11 @@ resource "aws_eks_cluster" "cluster_system_eks_cluster" {
   vpc_config {
     endpoint_private_access = true
     endpoint_public_access = true
-    subnet_ids = [aws_subnet.cluster_system_private_subnet_1.id, aws_subnet.cluster_system_private_subnet_2.id]
+    subnet_ids = [aws_subnet.cluster_system_private_subnet_1.id,
+                  aws_subnet.cluster_system_private_subnet_2.id,
+                  aws_subnet.cluster_system_public_subnet_2.id,
+                  aws_subnet.cluster_system_public_subnet_1.id,
+                  ]
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
